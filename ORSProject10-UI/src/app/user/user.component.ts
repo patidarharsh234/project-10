@@ -162,8 +162,6 @@ export class UserComponent extends BaseCtl {
     }
     return null;
   }
-  test() {
 
-  }
 
 }

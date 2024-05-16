@@ -190,6 +190,7 @@ public abstract class BaseCtl<F extends BaseForm, T extends BaseDTO, S extends B
 				if (loginIdCheck != null && loginIdCheck.getId() != dto.getId()) {
 					res.addMessage(dto.getLabel() + " already Exist");
 					res.setSuccess(false);
+					
 				} else {
 					baseService.update(dto, userContext);
 					res.addMessage("Data is Updated..");

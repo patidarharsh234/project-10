@@ -16,19 +16,26 @@ export class AuthService implements HttpInterceptor {
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     console.log('auth request-response');
 
+    let modifiedRequest=req.clone({
+      withCredentials: true
+    })
+    
+    // const sessionId = sessionStorage.getItem("sessionId");
     if (localStorage.getItem('fname') && localStorage.getItem('token')) {
-      req = req.clone({
+     
+      modifiedRequest = modifiedRequest.clone({
         setHeaders: {
-          "withCredentials": "true",
           "name": "Harsh",
-
-          Authorization: this.http.getToken()
+          // 'sessionId':sessionId,
+          Authorization: this.http.getToken(),
+          jsessionid:this.http.getJsessionid()
         }
       })
+
     }
     console.log(req.headers.get("Authorization") + "------------------->>>")
     
-    return next.handle(req).pipe(
+    return next.handle( modifiedRequest).pipe(
       catchError((error: HttpErrorResponse) => {
      
         if (error.status === 401) {
@@ -36,14 +43,21 @@ export class AuthService implements HttpInterceptor {
           this.router.navigate(['/login'], {queryParams: { errorMessage: error.error },} );         
          }
 
-        if (error.status === 403) {
+        // if (error.status === 403) {
+        //   localStorage.clear();
+        //   this.router.navigate(['/login'],{ queryParams: { errorMessage: "Your Session has been Expired! Please Re-Login"} }  );
+        //  }
+
+
+         //--->FrontCtl se message lane ke tiem pr na ki jwtRequestFilter pr.
+         if (error.status === 403) {
           localStorage.clear();
-          this.router.navigate(['/login'],{ queryParams: { errorMessage: 'Your Session has been Expired! Please Re-Login'} }  );
+          this.router.navigate(['/login'],{ queryParams: { errorMessage: error.error} }  );
          }
 
          
         return throwError(error);
-      }
+                                              }
       )
     );
 

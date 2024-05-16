@@ -4,7 +4,9 @@ import java.util.Enumeration;
 import java.util.LinkedHashSet;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpSessionBindingEvent;
 import javax.validation.Valid;
 
 import org.apache.tomcat.util.bcel.classfile.EnumElementValue;
@@ -16,6 +18,7 @@ import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.rays.common.BaseCtl;
@@ -49,6 +53,7 @@ import com.rays.service.UserServiceInt;
 @RestController // F extends BaseFORM,T extend BaseDto,S extends baseServiceInt
 @RequestMapping(value = "Auth") // userForm extend BaseForm ,UserDto extend BaseDto,UserServiceInt extend
 								// BaseServiceInt
+
 public class LoginCtl extends BaseCtl<UserForm, UserDTO, UserServiceInt> {
 
 	/**
@@ -57,9 +62,9 @@ public class LoginCtl extends BaseCtl<UserForm, UserDTO, UserServiceInt> {
 	 * @param loginId
 	 * @return
 	 */
-
-	@Autowired
-	private AuthenticationManager authenticationManager;// durgesh vedio-->
+//
+//	@Autowired
+//	private AuthenticationManager authenticationManager;// durgesh vedio-->
 
 	@Autowired
 	private JwtTokenUtil jwtTokenUtil;
@@ -86,8 +91,9 @@ public class LoginCtl extends BaseCtl<UserForm, UserDTO, UserServiceInt> {
 	}
 
 	@PostMapping("login")
-	public ORSResponse login(@RequestBody @Valid LoginForm form, BindingResult bindingResult, HttpSession session,
-			HttpServletRequest request) throws Exception {
+	public ORSResponse login(@RequestBody @Valid LoginForm form, BindingResult bindingResult,
+			HttpServletRequest request, HttpServletResponse response, HttpSession session) throws Exception {
+		System.out.println("path===Login..=" + request.getPathInfo());
 
 		ORSResponse res = validate(bindingResult);
 
@@ -102,15 +108,17 @@ public class LoginCtl extends BaseCtl<UserForm, UserDTO, UserServiceInt> {
 			res.addMessage("Invalid ID or Password");
 		} else {
 			UserContext context = new UserContext(dto);
-
-			 session.setAttribute("userContext", context);
+			HttpSession session1 = request.getSession();
+			session1.setAttribute("userContext", context);
+			session.setAttribute("sessionId",  session1.getId());
+			// session.setAttribute("userContext", context);
 
 			// session.setAttribute("test", dto.getFirstName());
 
 			res.setSuccess(true);
 			res.addData(dto);
 
-			res.addResult("jsessionid", session.getId());
+			res.addResult("jsessionid", session1.getId());
 			res.addResult("loginId", dto.getLoginId());
 			res.addResult("fname", dto.getFirstName());
 			res.addResult("lname", dto.getLastName());
@@ -118,7 +126,7 @@ public class LoginCtl extends BaseCtl<UserForm, UserDTO, UserServiceInt> {
 
 			// token -->genrate process start
 			/* System.out.println("jsessionid " + session.getId()); */
-			
+
 			// durgesh vedio-->se-Basant sir ki soch.
 			// this.authenticationManager.authenticate(new
 			// UsernamePasswordAuthenticationToken(context, res));
@@ -129,6 +137,7 @@ public class LoginCtl extends BaseCtl<UserForm, UserDTO, UserServiceInt> {
 
 			final String token = jwtTokenUtil.generateToken(form.getLoginId());
 			res.addResult("token", token);
+			System.out.println("Inside LoginCtl dto == null ");
 			return res;
 
 		}
@@ -172,10 +181,10 @@ public class LoginCtl extends BaseCtl<UserForm, UserDTO, UserServiceInt> {
 	 * @return
 	 */
 	@PostMapping("/signUp")
-	public ORSResponse signUp(@RequestBody @Valid UserRegistrationForm form, BindingResult bindingResult) {
+	public ORSResponse signUp(@RequestBody @Valid UserRegistrationForm form, BindingResult bindingResult,
+			HttpServletRequest request) {
 		System.out.println("Inside LoginCtl Sign Up Called");
 		ORSResponse res = validate(bindingResult);
-	
 
 		if (!res.isSuccess()) {
 			res.addMessage("Please fill following empty fields");

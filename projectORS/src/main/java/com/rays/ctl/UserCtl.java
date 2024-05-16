@@ -2,21 +2,29 @@
 package com.rays.ctl;
 
 import java.io.IOException;
+
+
 import java.io.OutputStream;
+import java.security.Key;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.crypto.SecretKey;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -31,6 +39,7 @@ import com.rays.common.attachment.AttachmentForm;
 import com.rays.common.attachment.AttachmentServiceInt;
 import com.rays.common.mail.EmailDTO;
 import com.rays.common.mail.EmailServiceImpl;
+
 import com.rays.config.JwtTokenUtil;
 import com.rays.dto.RoleDTO;
 import com.rays.dto.UserDTO;
@@ -38,11 +47,10 @@ import com.rays.form.ChangePasswordForm;
 import com.rays.form.ForgetPasswordForm;
 import com.rays.form.MyProfileForm;
 import com.rays.form.UserForm;
+import com.rays.jwtblacklistuse.TokenBlacklist1;
+import com.rays.jwtblacklistuse.UpdateAndBuildNewToken;
 import com.rays.service.RoleServiceInt;
 import com.rays.service.UserServiceInt;
-
-import javassist.bytecode.stackmap.BasicBlock.Catch;
-import jwtblacklist.TokenBlacklist;
 
 /**
  * @author Harsh Patidar
@@ -65,6 +73,9 @@ public class UserCtl extends BaseCtl<UserForm, UserDTO, UserServiceInt> {
 	@Autowired
 	JwtTokenUtil jwtTokenUtil;
 
+	@Autowired
+	UpdateAndBuildNewToken refreshToken;
+
 	/**
 	 * Send email
 	 */
@@ -83,14 +94,31 @@ public class UserCtl extends BaseCtl<UserForm, UserDTO, UserServiceInt> {
 	}
 
 	@GetMapping("/logout")
-	public ORSResponse logout(HttpServletRequest req, HttpServletResponse response) {
+	public ORSResponse logout(HttpServletRequest req, HttpServletResponse response,
+			@RequestHeader("Authorization") String requestTokenHeader) {
 		ORSResponse res = new ORSResponse(true);
 		HttpSession session = req.getSession();
 		session.invalidate();
-
 		// res.setSuccess(true);
-		res.addMessage("Logout Successfully");
+
 		// res.addResult("roleList", list);
+
+		try {
+			String jwtToken = requestTokenHeader.substring(7); // Remove "Bearer " prefix
+			TokenBlacklist1.addToBlacklist(jwtToken);
+
+			res.addMessage("Logout Successfully");
+			// return ResponseEntity.ok("Logged out successfully");
+		} catch (Exception e) {
+			// return ResponseEntity.badRequest().body("Failed to logout. Error: " +
+			// e.getMessage());
+			res.addMessage("Failed to logout. Error: " + e.getMessage());
+		}
+
+		refreshToken.RefreshToken(req, res);
+
+		res.addMessage("Logout Successfully");
+
 		return res;
 	}
 
@@ -201,8 +229,7 @@ public class UserCtl extends BaseCtl<UserForm, UserDTO, UserServiceInt> {
 	public ORSResponse uploadPic(@RequestParam("file") MultipartFile file, HttpServletRequest req) {
 		return uploadPic(userContext.getUserId(), file, req);
 	}
-	
-	
+
 	/**
 	 * Downloads profile picture of logged in user
 	 * 
@@ -247,10 +274,8 @@ public class UserCtl extends BaseCtl<UserForm, UserDTO, UserServiceInt> {
 
 			res.setSuccess(true);
 			res.addResult("imageId", imageId);
-			res.addMessage(
-					"IMAGE  Add=User note contains ImageId  : AND : User me set(ImageID) .... OR|"
-					+ "IMAGE  Updated=User contains ImageId . "
-							+ "imageID=" + imageId);
+			res.addMessage("IMAGE  Add=User note contains ImageId  : AND : User me set(ImageID) .... OR|"
+					+ "IMAGE  Updated=User contains ImageId . " + "imageID=" + imageId);
 
 		} catch (Exception e) {
 			res.setSuccess(false);
@@ -258,7 +283,6 @@ public class UserCtl extends BaseCtl<UserForm, UserDTO, UserServiceInt> {
 		}
 		return res;
 	}
-
 
 	/**
 	 * Downloads profile picture of given user id

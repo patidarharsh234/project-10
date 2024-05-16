@@ -16,6 +16,7 @@ export class UserListComponent extends BaseListCtl {
 
 
 
+
   public form = {
 
     error: false, //error 
@@ -38,6 +39,9 @@ export class UserListComponent extends BaseListCtl {
   constructor(public locator: ServiceLocatorService, public route: ActivatedRoute, private httpClient: HttpClient) {
     super(locator.endpoints.USER, locator, route);
   }
+
+
+  
 
   createImageFromBlob(image: Blob) {
     let reader = new FileReader();

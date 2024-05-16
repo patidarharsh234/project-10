@@ -1,15 +1,19 @@
 package com.rays.config;
 
 import java.io.IOException;
+
 import java.io.PrintWriter;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponseWrapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.server.WebServerException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,12 +22,15 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.rays.exception.ForbiddenException;
+import com.rays.jwtblacklistuse.TokenBlacklist1;
 import com.rays.service.JwtUserDetailsService;
 
 import org.springframework.security.core.AuthenticationException;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.UnsupportedJwtException;
@@ -55,7 +62,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 			throws ServletException, IOException {
 
 		try {
-			String path = request.getServletPath();
+			String path = request.getRequestURI();
+			System.out.println(".........pathIn JwtRequestFilter" + path);
 
 			final String withCre = request.getHeader("name");
 
@@ -63,61 +71,105 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
 			String username = null;
 			String jwtToken = null;
-			// JWT Token is in the form "Bearer token". Remove Bearer word and get only the
-			// Token
+			
+			
+			if (path.equals("/Auth/login")) {
+				//user Authenticated nhi hota to do filter response me 403 Le kr jata he Authenticated Apis pe.
+				chain.doFilter(request, response);
+			} else {
+				
+				
 
-			if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
-				jwtToken = requestTokenHeader.substring(7);
+				if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
+					jwtToken = requestTokenHeader.substring(7);
 
-				username = jwtTokenUtil.getUsernameFromToken(jwtToken);
+					// yhi pr application ko pata chl jayega ki Token Invalidate he.
+					// if conditon ke ander ki condition ko chod kisi bhi lien pr Exception rays
+					// hoti to catch
+					// block handel krta.
+					System.out.println("token validate run......!!!!!!!");
+					username = jwtTokenUtil.getUsernameFromToken(jwtToken);
+					System.out.println("token validate pass......!!!!!!!");
 
-			}
+					// Me created-> Token Logout//Force fully Token ko Expire Logout ke bad/Fullly
+					// Token Expierd not only chang in character.
+					// catch block ager application me if ke ander ksis lien pr exception aaye
+					// (runTiemExcetion).
+//					try {
+//						if (TokenBlacklist1.isBlacklisted(jwtToken)) {
+//							response.setStatus(HttpStatus.UNAUTHORIZED.value());
+//							response.getWriter()
+//									.write("Token  Is BlackListed.....!!!===" + HttpStatus.UNAUTHORIZED.value());
+//							return;
+//						}
+//					} catch (Exception e) {
+//						response.getWriter().write("TokenBlackListException:" + e.getMessage());
+//					} // TheEnd.
 
+				} else {
 
-            // yha token ko set krte Application me authentication me yhi bata ri application ko ki user authenticate he. 
-			if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-
-				UserDetails userDetails = this.jwtUserDetailsService.loadUserByUsername(username);
-
-				// if token is valid configure Spring Security to manually set authentication
-				if (jwtTokenUtil.validateToken(jwtToken, userDetails)) {
-
-					// userDetails.getAuthorities()-->userClass ki constructor ki help se authirity
-					// attribute me set karaya taha array vali authorities jo ki
-					// userDetailService me de he.
-UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails,null, userDetails.getAuthorities());
-							
-
-					// details me kon si servlet ki request aayi usko add krta deatails me
-	usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-							
-					// After setting the Authentication in the context, we specify
-					// that the current user is authenticated. So it passes the Spring Security
-					// Configurations successfully.
-					SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+					// throw new ForbiddenException("Your Session has been Expired! Please
+					// Re-Login");
+					// response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+					// response.getWriter().write("Your Session has been Expired! Please
+					// Re-Login...!!!");
 
 				}
 
-			}
-   
-			chain.doFilter(request, response);
+				// Application ka(Token) Authentication bhi check kr re ki khali he na.
+				if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+
+					UserDetails userDetails = this.jwtUserDetailsService.loadUserByUsername(username);
+
+					if (jwtTokenUtil.validateToken(jwtToken, userDetails)) {
+
+						UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
+								userDetails, null, userDetails.getAuthorities());
+
+						usernamePasswordAuthenticationToken
+								.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+						// Application me yha Token set kiya ja raha he.
+						SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+						System.out.println("Token Set==>" + SecurityContextHolder.getContext().getAuthentication());
+
+					}
+
+				}
+
+				super.doFilter(request, response, chain);
+			}//end else condition.
+			
+			
+			
+			
+			
 		} catch (JwtException | AuthenticationException e) {
-		 //this catch block handel only-validate exception-becouse-jwtException-handl only validate ex.
-		//you can set whatever in the setStatus this change only code name (like 401 to 403) -note working.	
+			// this catch block handel only-validate exception-becouse-jwtException-handl
+			// only validate ex.
+			// you can set whatever in the setStatus this change only code name (like 401 to
+			// 403) -note working.
+
+			// token me kuch characte hata dene pr..or actual Expier hone pr 5 ghante bad .
+			// Application Throw kar ri es Exception ko--> Es liye cath box me catch kr ri
+			// --> kab to glt token pr or kha pata chl ra application ko.
+			// getUserNameFromToken pr
+			// --Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
+			// application or jvm se related code me kisis lien pr exception rays hoti to
+			// catch Block handel krta
+			// na ki if condition me true or false hone pr
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);// 401//token is invalid
-          // PrintWriter print= response.getWriter();
-          // print.write();
 			response.getWriter().write("Token is invalid... plz login again..!!");
 			response.getWriter().flush();
 			response.getWriter().close();
-		
+
+		} catch (ForbiddenException e) {
+			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+			response.getWriter().write(e.getMessage());
+			response.getWriter().flush();
+			response.getWriter().close();
 		}
-//		catch(WebServerException e) {
-//			response.setStatus(HttpServletResponse.SC_FORBIDDEN);// -->403//token null
-//			response.getWriter().write("your session Expierd plez login agen..!!!");
-//			 response.getWriter().flush();
-//			response.getWriter().close();
-//		}
+
 	}
 
 }

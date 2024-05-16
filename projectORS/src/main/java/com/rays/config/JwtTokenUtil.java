@@ -82,6 +82,7 @@ public class JwtTokenUtil implements Serializable {
 
 	/**
 	 * @param token
+	 * Token Validate Na hone Pr Bhi Ye Work Krti he.
 	 * @return
 	 */
 	private Claims getAllClaimsFromToken(String token) {
@@ -183,6 +184,8 @@ public class JwtTokenUtil implements Serializable {
 		Date now = new Date();
 		Date expiration = new Date(now.getTime() + jwtExpiration * 1000);
 
+		
+		
 		return Jwts.builder().setClaims(claims).setSubject(userDetails.getUsername()).setIssuedAt(now)
 				.setExpiration(expiration).signWith(SignatureAlgorithm.HS512, secret).compact();
 

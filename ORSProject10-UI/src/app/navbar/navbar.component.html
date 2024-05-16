@@ -189,12 +189,51 @@ color: rgb(235, 6, 6);
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
           <a class="dropdown-item" [routerLink]="['/subject']"><i class="fa fa-calculator"></i> &nbsp; {{'Add Subject' |
-            translate}}</a> <a class="dropdown-item" [routerLink]="['/subjectlist']"> <i class="fa fa-list"></i> &nbsp; {{'Subject
-            List' | translate}}
+            translate}}</a> <a class="dropdown-item" [routerLink]="['/subjectlist']"> <i class="fa fa-list"></i> &nbsp; {{'Subject List' | translate}}
           </a>
         </div>
+     </li>
 
+
+
+
+
+      <li class="nav-item dropdown" style="padding-left: 5px">
+        <a class="nav-link dropdown-toggle" [routerLink]="['/#']"
+          id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <font style="color: white;">{{'project' | translate}}</font>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a class="dropdown-item" [routerLink]="['/project']"><i class="fa fa-calculator"></i> &nbsp; {{'Add project' |
+            translate}}</a> <a class="dropdown-item" [routerLink]="['/projectlist']"> <i class="fa fa-list"></i> &nbsp; {{'project List'
+             | translate}}
+          </a>
+        </div>
       </li>
+
+
+
+
+    
+      <li class="nav-item dropdown" style="padding-left: 5px">
+        <a class="nav-link dropdown-toggle" [routerLink]="['/#']"
+          id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><font style="color: white;">
+                                {{'PRODUCT' | translate}}</font>
+        </a>
+
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+
+          <a class="dropdown-item" [routerLink]="['/product']"><i class="fa fa-calculator"></i> &nbsp; {{'Add Product' | translate}}</a>
+          <a class="dropdown-item" [routerLink]="['/productlist']"> <i class="fa fa-list"></i> &nbsp; {{'Product List'    | translate}} </a>
+
+        </div>
+      </li>
+
+
+
+
+     
+
 
 
       <li class="nav-item dropdown" style="padding-left: 5px">

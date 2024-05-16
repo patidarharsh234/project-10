@@ -54,13 +54,7 @@ export class LoginComponent implements OnInit {
       console.log('msssssssssgggggggggggg = >', this.form.message)
     });
 
-//front end ki isLogout -httpservice ki ->sessionexpire vali.
-    // if(this.httpService.form.error == true){
-    //   this.form.message = this.httpService.form.message;
-    //   this.form.error = this.httpService.form.error;
-    // }
-    
-    //navbar.component se logout methode se aa ra-Logout karne ke time pr >--->>"/login/true" bhej rahe he.
+ 
     var a = '';
     this.serviceLocator.getPathVariable(this.route, function (params) { a = params["userparams"]; })
     if (a == 'true') {
@@ -97,6 +91,7 @@ export class LoginComponent implements OnInit {
       if (_self.dataValidator.isTrue(res.success)) {
 
         _self.httpService.setToken(res.result.token);
+        sessionStorage.setItem("sessionId",res.result.jsessionid);
         localStorage.setItem("loginId", res.result.loginId);
         let tokenStr = "Bearer " + res.result.token;
         localStorage.setItem("token", tokenStr);
@@ -104,6 +99,7 @@ export class LoginComponent implements OnInit {
         localStorage.setItem("fname", res.result.fname);
         localStorage.setItem("lname", res.result.lname);
         localStorage.setItem("userid", res.result.data.id);
+        localStorage.setItem("jsessionid", res.result.jsessionid);
     
 
 

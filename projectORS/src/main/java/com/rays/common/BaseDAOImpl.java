@@ -178,9 +178,11 @@ public abstract class BaseDAOImpl<T extends BaseDTO> implements BaseDAOInt<T> {
 
 		List<Predicate> whereClause = getWhereClause(dto, builder, qRoot);
 
-		if (dto.isGroupFilter()) {
-			whereClause.add(builder.equal(qRoot.get("orgId"), dto.getOrgId()));
-		}
+		//orgId (protected Long orgId = 0L;) 0 set ki he.  and jb bhi user ctl se data save krta he to uske tabel ki row me 
+		//org id 0 add hoti chli jati he.
+//		if (dto.isGroupFilter()) {
+//			whereClause.add(builder.equal(qRoot.get("orgId"), dto.getOrgId()));
+//		}
 
 		cq.where(whereClause.toArray(new Predicate[whereClause.size()]));
 

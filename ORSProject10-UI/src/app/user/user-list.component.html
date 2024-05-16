@@ -111,6 +111,8 @@ background-size: cover;width:auto;
               </tr>
 
             </thead>
+
+            
             <tbody>
               <tr *ngFor="let m of form.list; let i = index" align="center">
                 <td> <input type="checkbox" #checkboxes (change)="checklistUpdate()"  id="{{m.id}}" [disabled]="m.roleName=='Admin'" name="list_name" />

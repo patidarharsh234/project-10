@@ -4,6 +4,7 @@ import { CookieService } from 'ngx-cookie-service';
 import { Router } from '@angular/router'
 
 
+
 @Injectable()
 
 export class HttpServiceService {
@@ -31,6 +32,10 @@ export class HttpServiceService {
   getToken() {
     console.log(localStorage.getItem('token') + '====>> getToken');
     return localStorage.getItem('token');
+  }
+
+  getJsessionid(){
+    return localStorage.getItem('jsessionid');
   }
 
   constructor(private router: Router, private httpClient: HttpClient) {
@@ -61,32 +66,33 @@ export class HttpServiceService {
 
 
   get(endpoint, callback) {
-    //    if (this.isLogout()) {
-    //    this.userparams.url = this.router.url;
-    // console.log('url>>>------get------------------->>>',this.userparams.url );
-    //   }
-
     this.userparams.url = this.router.url;
    // console.log('httpservice return for auth class service-------1');//auth runig proccessing cheking 
     return this.httpClient.get(endpoint).subscribe((data) => {
     //  console.log('httpservice return for auth class service-------2');//auth runig proccessing cheking
-      callback(data,);
+      callback(data,)
 
-    });
+    }
+
+
+    
+    
+    
+    
+    );
   }
 
   post(endpoint, bean, callback) {
-    //   if (this.isLogout()) {
-    //    this.userparams.url = this.router.url;
-    // console.log('url>>>-----post-------------------->>>',this.userparams.url );
-    //   }
       this.userparams.url = this.router.url;
-    return this.httpClient.post(endpoint, bean).subscribe((data) => {
+    return this.httpClient.post(endpoint, bean).subscribe(
+      (data) => {
       callback(data);
 
-    }, error => {
-      console.log('ORS Error--', error);
-    });
+    }
+
+
+    
+    );
   }
 
 
