@@ -1,0 +1,252 @@
+<app-navbar></app-navbar>
+<style>
+  .grad {
+    background-image: linear-gradient(to bottom right, rgb(32, 168, 168), rgb(219, 231, 237));
+    background-repeat: no repeat;
+    background-size: 100%;
+    padding-bottom: 25px;
+  }
+</style>
+
+<style type="text/css">
+  .log1 {
+    padding-top: 13%;
+  }
+
+  .input-group-addon {
+    box-shadow: 9px 8px 7px #001a33;
+
+  }
+</style>
+
+<div class="row " style="padding-top: 2%; padding-bottom:2%;
+
+background: url(assets/files/3.jpg) no-repeat center center;
+background-attachment: fixed;
+background-size: cover;width:100%;
+  height: auto;">
+
+<div class="col-sm-4"></div>
+  <div class="col-sm-4">
+    <div class="card">
+      <div class="card-body input-group-addon grad ">
+        <form name="userForm">
+
+
+          <h2 *ngIf="!form.data.id>0" class="text-primary font-weight-bold" style="text-align: center;">{{'Add Project' |
+            translate }}</h2>
+          <h2 *ngIf="form.data.id>0" class="text-primary font-weight-bold" style="text-align: center;">{{'Update Project' |
+            translate }}</h2>
+
+
+          <div *ngIf="!form.error && form.message != null" class="alert alert-success alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            {{form.message | translate}}
+          </div>
+
+          <div *ngIf="form.error && form.message != ''" class="alert alert-danger alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            {{form.message | translate}}
+          </div>
+
+
+
+          <div>
+            <span class="pt-2"><b>{{'project Role Name' | translate }}</b>
+              <span class="required-field"></span>
+            </span>
+              <div class="col-sm-12">
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <div class="input-group-text"><i class="fa fa-user grey-text"></i> </div>
+                   </div>
+
+
+                   <select class="form-control" name="projectRoleId" [(ngModel)]="form.data.projectRoleId" aria-label="ngSelected">
+                    <option [ngValue]="" value="undefined">{{' Select projectRole' | translate }}</option>
+                    <option *ngFor="let obj of form.preload.projectRoleList" [value]="obj.key">{{obj.value}}</option>
+                  </select>
+               </div>
+            </div>
+            <span *ngIf="form.inputerror.projectRoleId != null" class="alertRedColor" style=" color: red;"> {{ form.inputerror.projectRoleId |
+              translate}} </span>
+            <!-- <span class="alertRedColor"> {{form.inputerror.roleId}} </span> -->
+        </div>
+
+        <div>
+          <span class="pt-2"><b>{{'project Working Employee' | translate }}</b>
+            <span class="required-field"></span></span>
+          <div class="col-sm-12">
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <div class="input-group-text"><i class="fa fa-user-circle grey-text"></i> </div>
+              </div>
+              <input type="text" name="employeeName" [(ngModel)]="form.data.employeeName" class="form-control"
+                placeholder="{{'Enter employee Name'  | translate }}">
+            </div>
+          </div><span *ngIf="form.inputerror.employeeName != null" class="alertRedColor" style=" color: red;">
+            {{form.inputerror.employeeName| translate}} </span>
+          <!-- <span class="alertRedColor"> {{form.inputerror.firstName}} </span> -->
+        </div>
+
+
+
+        <div>
+          <span class="pt-2"><b>{{'project Lead ' | translate }}</b>
+            <span class="required-field"></span></span>
+          <div class="col-sm-12">
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <div class="input-group-text"><i class="fa fa-user-circle grey-text"></i> </div>
+              </div>
+              <input type="text" name="projectLead" [(ngModel)]="form.data.projectLead" class="form-control"
+                placeholder="{{'Enter project Lead'  | translate }}">
+            </div>
+          </div><span *ngIf="form.inputerror.projectLead != null" class="alertRedColor" style=" color: red;">
+            {{form.inputerror.projectLead| translate}} </span>
+          <!-- <span class="alertRedColor"> {{form.inputerror.firstName}} </span> -->
+        </div>
+
+
+
+
+
+
+
+
+
+        <div>
+          <span class="pt-2"><b>{{'Gender' | translate }}</b>
+            <span class="required-field"></span></span>
+
+          <div class="col-sm-12">
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <div class="input-group-text"><i class="fa fa-venus grey-text"></i> </div>
+              </div>
+              <select class="form-control" name="gender" id="gender" [(ngModel)]="form.data.pgender"
+                style="cursor: pointer;">
+                <option [ngValue]="" value="undefined">{{'Please select' | translate }}</option>
+                <option value="Male">{{'Male' | translate }} </option>
+                <option value="Female">{{'Female' | translate }} </option>
+              </select>
+            </div>
+          </div><span *ngIf="form.inputerror.pgender != null" class="alertRedColor" style=" color: red;"> {{'gender'|
+            translate}} </span>
+          <!-- <span class="alertRedColor"> {{form.inputerror.gender}} </span> -->
+        </div>
+
+
+
+
+
+
+        
+        <div>
+          <span class="pt-2"><b>{{'EmployeeId  ' | translate }}</b>
+            <span class="required-field"></span></span>
+          <div class="col-sm-12">
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <div class="input-group-text"><i class="fa fa-user-circle grey-text"></i> </div>
+              </div>
+              <input type="text" name="employeeId" [(ngModel)]="form.data.employeeId" class="form-control"
+                placeholder="{{'Enter employeeId'  | translate }}">
+            </div>
+          </div><span *ngIf="form.inputerror.employeeId != null" class="alertRedColor" style=" color: red;">
+            {{form.inputerror.employeeId| translate}} </span>
+          <!-- <span class="alertRedColor"> {{form.inputerror.firstName}} </span> -->
+        </div>
+
+
+    
+
+ 
+
+
+        <div>
+         
+          <span class="pt-2"><b>{{'project FinishDate' | translate }}</b>
+           <span class="required-field"></span></span>
+
+         <div class="col-sm-12">
+           <div class="input-group">
+             <div class="input-group-prepend">
+               <div class="input-group-text"><i class="fa fa-table grey-text"></i> </div>
+             </div>
+             <input type="date"  [value]="form.data.projectFinishDate | date:'yyyy-MM-dd'" 
+               (input)="form.data.projectFinishDate=parseDate($event.target.value)" class="form-control form-control-sm"
+               required />
+           </div>
+         </div>
+<span *ngIf="form.inputerror.projectFinishDate != null" class="alertRedColor" style=" color: red;"> {{form.inputerror.projectFinishDate|
+           translate}} </span>
+         <!-- <span class="alertRedColor"> {{form.inputerror.dob}} </span> -->
+       </div>
+
+
+       
+      <div>
+        <span class="pt-2"><b>{{'Image' | translate }}</b>
+          <!-- <option [ngValue]="" value="undefined"></option> -->
+          <span *ngIf="!form.data.imageId" class="required-field"></span>
+        </span>
+       
+        
+        <div class="col-sm-12">
+          <div *ngIf="form.data.image">
+            <img src="http://localhost:8080/Project/image/{{form.data.id}}" height="55px" width="80px">
+          </div>
+          <div *ngIf="!form.data.image">
+            <img src="../../assets/files/pexels.jpg" height="55px" width="80px">
+          </div>
+        </div>
+
+        <div class="col-sm-12">
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <div class="input-group-text"><i class="fa fa-picture-o grey-text"></i> </div>
+            </div>
+            <input type="file" id="customFile" name="imageId" (change)="onFileSelect($event.target.files)"
+              accept="image/*">
+
+            <span class="alertRedColor"> {{form.inputerror.ProjectImage}} </span>
+          </div>
+        </div>
+    </div>
+
+
+    
+    <div class="row pt-2 pl-2 pb-3">
+
+      <div class="col-md-3"></div>
+
+
+      <div class="pt-2">
+        <button *ngIf="!form.data.id>0" (click)="onUpload()" class="btn btn-success mr-2">
+          {{'Save' | translate }}</button>
+      </div>
+
+      <div class="col-md-1"></div>
+
+      <div class="pt-2">
+        <button *ngIf="form.data.id>0" (click)="onUpload()" class="btn btn-success mr-2">
+          {{'Update' | translate }}</button>
+      </div>
+
+      <div class="pt-2">
+        <a class="btn btn-warning mr-1" type="button" [routerLink]="['/projectlist']"
+            style="text-decoration: none; color: white;">{{'Project List' | translate }}</a>
+      </div>
+    </div>
+
+
+  </form>
+</div>
+</div>
+</div>
+</div>
+<app-footer></app-footer>
+
+
+

@@ -1,0 +1,237 @@
+<app-navbar></app-navbar>
+<style>
+  .grad {
+    background-image: linear-gradient(to bottom right, rgb(32, 168, 168), rgb(219, 231, 237));
+    background-repeat: no repeat;
+    background-size: 100%;
+    padding-bottom: 25px;
+  }
+</style>
+
+<style type="text/css">
+  .log1 {
+    padding-top: 13%;
+  }
+
+  .input-group-addon {
+    box-shadow: 9px 8px 7px #001a33;
+
+  }
+</style>
+
+<div class="row " style="padding-top: 2%; padding-bottom:2%;
+
+background: url(assets/files/3.jpg) no-repeat center center;
+background-attachment: fixed;
+background-size: cover;width:100%;
+  height: auto;">
+
+<div class="col-sm-4"></div>
+  <div class="col-sm-4">
+    <div class="card">
+      <div class="card-body input-group-addon grad ">
+        <form name="userForm">
+
+
+          <h2 *ngIf="!form.data.id>0" class="text-primary font-weight-bold" style="text-align: center;">{{'Add Product' |
+            translate }}</h2>
+          <h2 *ngIf="form.data.id>0" class="text-primary font-weight-bold" style="text-align: center;">{{'Update Product' |
+            translate }}</h2>
+
+
+          <div *ngIf="!form.error && form.message != null" class="alert alert-success alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            {{form.message | translate}}
+          </div>
+
+          <div *ngIf="form.error && form.message != ''" class="alert alert-danger alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            {{form.message | translate}}
+          </div>
+
+
+       <!-- preload -->
+          <div>
+            <span class="pt-2"><b>{{'payment Mode ' | translate }}</b>
+              <span class="required-field"></span>
+            </span>
+              <div class="col-sm-12">
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <div class="input-group-text"><i class="fa fa-user grey-text"></i> </div>
+                   </div>
+
+
+                   <select class="form-control" name="paymentModeID" [(ngModel)]="form.data.paymentModeID" aria-label="ngSelected">
+                    <option [ngValue]="" value="undefined">{{' Select paymentMode' | translate }}</option>
+                    <option *ngFor="let obj of form.preload.paymentModePreload" [value]="obj.key">{{obj.value}}</option>
+                  </select>
+               </div>
+            </div>
+            <span *ngIf="form.inputerror.paymentModeID != null" class="alertRedColor" style=" color: red;"> {{ form.inputerror.projectRoleId |
+              translate}} </span>
+            <!-- <span class="alertRedColor"> {{form.inputerror.roleId}} </span> -->
+        </div>
+
+
+
+
+
+        <div>
+          <span class="pt-2"><b>{{'product Name' | translate }}</b>
+            <span class="required-field"></span></span>
+          <div class="col-sm-12">
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <div class="input-group-text"><i class="fa fa-user-circle grey-text"></i> </div>
+              </div>
+              <input type="text" name="productName" [(ngModel)]="form.data.productName" class="form-control"
+                placeholder="{{'Enter product Name'  | translate }}">
+            </div>
+          </div><span *ngIf="form.inputerror.productName != null" class="alertRedColor" style=" color: red;">
+            {{form.inputerror.productName| translate}} </span>
+          <!-- <span class="alertRedColor"> {{form.inputerror.firstName}} </span> -->
+        </div>
+
+
+
+        <div>
+          <span class="pt-2"><b>{{' productId ' | translate }}</b>
+            <span class="required-field"></span></span>
+          <div class="col-sm-12">
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <div class="input-group-text"><i class="fa fa-user-circle grey-text"></i> </div>
+              </div>
+              <input type="text" name="productId" [(ngModel)]="form.data.productId" class="form-control"
+                placeholder="{{'Enter product Id '  | translate }}">
+            </div>
+          </div><span *ngIf="form.inputerror.productId != null" class="alertRedColor" style=" color: red;">
+            {{form.inputerror.productId | translate}} </span>
+          <!-- <span class="alertRedColor"> {{form.inputerror.firstName}} </span> -->
+        </div>
+
+
+
+
+
+
+
+<!-- static preload -->
+
+        <div>
+          <span class="pt-2"><b>{{'price' | translate }}</b>
+            <span class="required-field"></span></span>
+
+          <div class="col-sm-12">
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <div class="input-group-text"><i class="fa fa-venus grey-text"></i> </div>
+              </div>
+              <select class="form-control" name="price" id="price" [(ngModel)]="form.data.price"
+                style="cursor: pointer;">
+                <option [ngValue]="" value="undefined">{{'Please select' | translate }}</option>
+                <option value=10000>{{'10000' | translate }} </option>
+                <option value="20000">{{'20000' | translate }} </option>
+                <option value="40000">{{'20000' | translate }} </option>
+                <option value="120000">{{'120000' | translate }} </option>
+                <option value="230000">{{'230000' | translate }} </option>
+              </select>
+            </div>
+          </div><span *ngIf="form.inputerror.price != null" class="alertRedColor" style=" color: red;"> {{form.inputerror.price|
+            translate}} </span>
+          <!-- <span class="alertRedColor"> {{form.inputerror.gender}} </span> -->
+        </div>
+
+    
+
+ 
+
+
+        <div>
+         
+          <span class="pt-2"><b>{{'Date Modified' | translate }}</b>
+           <span class="required-field"></span></span>
+
+         <div class="col-sm-12">
+           <div class="input-group">
+             <div class="input-group-prepend">
+               <div class="input-group-text"><i class="fa fa-table grey-text"></i> </div>
+             </div>
+             <input type="date"  [value]="form.data.dateModified | date:'yyyy-MM-dd'" 
+               (input)="form.data.dateModified=parseDate($event.target.value)" class="form-control form-control-sm"
+               required />
+           </div>
+         </div>
+<span *ngIf="form.inputerror.dateModified != null" class="alertRedColor" style=" color: red;"> {{form.inputerror.dateModified|
+           translate}} </span>
+         <!-- <span class="alertRedColor"> {{form.inputerror.dob}} </span> -->
+       </div>
+
+
+       
+      <div>
+        <span class="pt-2"><b>{{'Image' | translate }}</b>
+          <!-- <option [ngValue]="" value="undefined"></option> -->
+          <span *ngIf="!form.data.imageId" class="required-field"></span>
+        </span>
+       
+        
+        <div class="col-sm-12">
+          <div *ngIf="form.data.imageId">
+            <img src="http://localhost:8080/product/Image/{{form.data.id}}" height="55px" width="80px">
+          </div>
+          <div *ngIf="!form.data.imageId">
+            <img src="../../assets/files/pexels.jpg" height="55px" width="80px">
+          </div>
+        </div>
+
+        <div class="col-sm-12">
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <div class="input-group-text"><i class="fa fa-picture-o grey-text"></i> </div>
+            </div>
+            <input type="file" id="customFile" name="imageId" (change)="onFileSelect($event.target.files)"
+              accept="image/*">
+
+            <span class="alertRedColor"> {{form.inputerror.imageId}} </span>
+          </div>
+        </div>
+    </div>
+
+
+    
+    <div class="row pt-2 pl-2 pb-3">
+
+      <div class="col-md-3"></div>
+
+
+      <div class="pt-2">
+        <button *ngIf="!form.data.id>0" (click)="onUpload()" class="btn btn-success mr-2">
+          {{'Save' | translate }}</button>
+      </div>
+
+      <div class="col-md-1"></div>
+
+      <div class="pt-2">
+        <button *ngIf="form.data.id>0" (click)="onUpload()" class="btn btn-success mr-2">
+          {{'Update' | translate }}</button>
+      </div>
+
+      <div class="pt-2">
+        <a class="btn btn-warning mr-1" type="button" [routerLink]="['/productlist']"
+            style="text-decoration: none; color: white;">{{'Product List' | translate }}</a>
+      </div>
+    </div>
+
+
+  </form>
+</div>
+</div>
+</div>
+</div>
+<app-footer></app-footer>
+
+
+
+
